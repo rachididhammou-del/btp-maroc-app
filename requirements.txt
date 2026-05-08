@@ -1,2 +1,68 @@
-streamlit
-pandas
+import streamlit as st
+import pandas as pd
+
+# 1. إعدادات الصفحة والتصميم
+st.set_page_config(page_title="BTP-Pro Maroc AI", page_icon="🏗️", layout="wide")
+
+# استايل مغربي بسيط
+st.markdown("""
+    <style>
+    .main { background-color: #f5f7f9; }
+    .stButton>button { width: 100%; border-radius: 5px; height: 3em; background-color: #2c3e50; color: white; }
+    </style>
+    """, unsafe_allow_html=True)
+
+# 2. الهيدر (Header)
+st.title("🏗️ BTP-Pro Maroc: Assistant AI")
+st.write("المنصة الذكية للتقنيين والمهندسين في المغرب")
+
+# 3. القائمة الجانبية (Sidebar) للخدمات
+service = st.sidebar.selectbox(
+    "اختر الخدمة التي تحتاجها:",
+    ("حسابات الميزانية السريعة (Métré)", "المساعد القانوني (Urbanisme)", "توليد تقرير ورش احترافي")
+)
+
+# 4. الخدمة الأولى: حسابات Métré
+if service == "حسابات الميزانية السريعة (Métré)":
+    st.header("📊 حساب كميات الخرسانة والأسعار")
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        element = st.selectbox("العنصر الإنشائي", ["Semelles (القواعد)", "Poteaux (الأعمدة)", "Dalle (الضالة)"])
+        length = st.number_input("الطول (متر)", value=1.0)
+        width = st.number_input("العرض (متر)", value=1.0)
+        height = st.number_input("الارتفاع/السمك (متر)", value=0.20)
+    
+    with col2:
+        unit_price = st.number_input("ثمن المتر المكعب بالمغرب (DH)", value=900)
+        quantity = length * width * height
+        total_price = quantity * unit_price
+        
+    st.info(f"الكمية المطلوبة: {quantity:.2f} m³")
+    st.success(f"التكلفة التقديرية: {total_price:.2f} DH")
+
+# 5. الخدمة الثانية: المساعد القانوني
+elif service == "المساعد القانوني (Urbanisme)":
+    st.header("📜 مستشار قوانين التعمير والصحة")
+    query = st.text_input("اسأل عن قانون (مثال: المسافة القانونية للمطمورة، رخصة السكن...)")
+    
+    if query:
+        # هنا سنضع منطق الرد بناءً على القوانين المغربية
+        if "loi 12-90" in query.lower() or "تعمير" in query:
+            st.write("**الرد الذكي:** بناءً على القانون 12-90 المتعلق بالتعمير، يجب احترام تصاميم التهيئة والموافقة الصحية قبل البدء...")
+        elif "fosse" in query or "مطمورة" in query:
+            st.write("**الرد الذكي:** بالنسبة للمطمورة (Fosse Septique)، المعايير التقنية تشترط مسافة لا تقل عن 10 أمتار عن الآبار و3 أمتار عن حدود الجيران.")
+        else:
+            st.write("جاري البحث في الأرشيف القانوني المغربي...")
+
+# 6. الخدمة الثالثة: تقارير الورش
+elif service == "توليد تقرير ورش احترافي":
+    st.header("📝 محرر التقارير اليومية")
+    with st.form("report"):
+        project = st.text_input("اسم المشروع")
+        obs = st.text_area("الملاحظات بالدارجة أو الفرنسية (مثلاً: اليوم صبينا الضالة وكان الجو حار)")
+        submit = st.form_submit_button("تحويل لتقرير رسمي بالفرنسية")
+        
+        if submit:
+            st.subheader("التقرير الجاهز للطباعة:")
+            st.code(f"Projet: {project}\nObjet: Journal de chantier\nObservation: Coulage de béton effectué. Température élevée, arrosage préconisé...")
